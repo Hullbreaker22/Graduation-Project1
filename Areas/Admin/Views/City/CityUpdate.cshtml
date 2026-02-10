@@ -1,0 +1,129 @@
+﻿@model City
+
+<div class="container mt-5">
+    <div class="card shadow-lg p-4 rounded-4">
+        <h2 class="text-center text-primary mb-4 fw-bold"> Update City</h2>
+
+        <form asp-action="CityUpdate" asp-controller="City" method="post" id="editCityForm">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label fw-semibold"></label>
+                <input asp-for="Name" class="form-control shadow-sm" placeholder="Enter city name..." />
+                <span asp-validation-for="Name" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Country" class="form-label fw-semibold"></label>
+                <input asp-for="Country" class="form-control shadow-sm" placeholder="Enter country name..." />
+                <span asp-validation-for="Country" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="TimeZone" class="form-label fw-semibold"></label>
+                <input asp-for="TimeZone" class="form-control shadow-sm" placeholder="Enter timezone..." />
+                <span asp-validation-for="TimeZone" class="text-danger small"></span>
+            </div>
+
+            <div class="d-flex justify-content-center mt-4 gap-3">
+                <button type="button" id="confirmBtn" class="btn btn-confirm px-4">
+                    <i class="fas fa-check-circle"></i> Confirm
+                </button>
+                <a href="/Admin/City/Cites" class="btn btn-cancel px-4">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- SweetAlert -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- Validation Scripts -->
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+<script>
+    document.getElementById("confirmBtn").addEventListener("click", function (e) {
+        const form = document.getElementById("editCityForm");
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        Swal.fire({
+            title: "Confirm Update?",
+            text: "Do you want to save the changes?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Yes, Save it",
+            cancelButtonText: "Cancel",
+            confirmButtonColor: "#198754",
+            cancelButtonColor: "#6c757d"
+        }).then(result => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+    });
+</script>
+
+<!-- STYLES -->
+<style>
+    body {
+        background-color: #f5f7fa;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .card {
+        max-width: 600px;
+        margin: auto;
+        border: none;
+    }
+
+    .form-label {
+        color: #333;
+    }
+
+    .form-control {
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+        .form-control:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 5px rgba(13, 110, 253, 0.4);
+        }
+
+    .btn-confirm {
+        background-color: #198754;
+        color: white;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-confirm:hover {
+            background-color: #157347;
+            transform: translateY(-2px);
+        }
+
+    .btn-cancel {
+        background-color: #6c757d;
+        color: white;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        line-height: 38px;
+    }
+
+        .btn-cancel:hover {
+            background-color: #5c636a;
+            transform: translateY(-2px);
+        }
+</style>

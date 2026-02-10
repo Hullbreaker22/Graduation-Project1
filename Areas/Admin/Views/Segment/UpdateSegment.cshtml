@@ -1,0 +1,98 @@
+﻿@model FlightSegment
+
+<div class="container mt-4">
+    <h3 class="fw-bold mb-4">Update Flight Segment</h3>
+
+    <form asp-action="UpdateSegment" method="post">
+
+        <input type="hidden" asp-for="Segment_ID_Pk" />
+
+        <div class="mb-3">
+            <label class="form-label">Flight</label>
+            <select asp-for="Flight_ID_Fk" class="form-select">
+                @foreach (var flight in ViewBag.Flights)
+                {
+                    <option value="@flight.Flight_Id_PK">
+                        @flight.Flight_Code
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Flight Number</label>
+            <input asp-for="Flight_Number" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Segment Order</label>
+            <input asp-for="Segment_Order" class="form-control" type="number" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Cabin Class</label>
+            <select asp-for="cabin" asp-items="Html.GetEnumSelectList<Cabin>()" class="form-select"></select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Departure Airport</label>
+            <select asp-for="Departure_Airport_ID_Fk" class="form-select">
+                @foreach (var ap in ViewBag.Airports)
+                {
+                    <option value="@ap.Id">@ap.Name">@ap.Name</option>
+                }
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Arrival Airport</label>
+            <select asp-for="Arrival_Airport_ID_Fk" class="form-select">
+                @foreach (var ap in ViewBag.Airports as List<AirPort>)
+                {
+                    <option value="@ap.Id">@ap.Name</option>
+                }
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Departure Time</label>
+            <input asp-for="Departure_Time" class="form-control" type="datetime-local" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Arrival Time</label>
+            <input asp-for="Arrival_Time" class="form-control" type="datetime-local" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Distance (KM)</label>
+            <input asp-for="Distance_KM" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Duration (Min)</label>
+            <input asp-for="Duration_Min" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Layover Duration (Min)</label>
+            <input asp-for="Layover_Duration_Min" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Distance From Origin</label>
+            <input asp-for="Distance_From_Origin" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Distance To Destination</label>
+            <input asp-for="Distance_To_Destination" class="form-control" />
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <a asp-action="Segments" class="btn btn-secondary">Back</a>
+            <button type="submit" class="btn btn-success">Update Segment</button>
+        </div>
+
+    </form>
+</div>

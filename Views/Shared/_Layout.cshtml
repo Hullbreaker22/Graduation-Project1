@@ -1,0 +1,198 @@
+﻿@using SkyLine.Utility
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    var isAuthenticated = User?.Identity?.IsAuthenticated ?? false;
+    string displayName = "My Profile";
+    bool showDashboard = false;
+    bool showCustomerLinks = false;
+
+
+    if (isAuthenticated)
+    {
+        var user = await UserManager.GetUserAsync(User);
+
+        var userpic = user.Image;
+        displayName = !string.IsNullOrEmpty(user?.Name) ? user.Name : user.UserName;
+
+        // Use User.IsInRole for reliable layout check
+        showDashboard = User.IsInRole(SD.AdminRole) || User.IsInRole(SD.SuperAdminRole);
+        showCustomerLinks = !showDashboard && User.IsInRole(SD.CustomerRole);
+    }
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+    <meta charset="utf-8">
+    <title>SkyLine| Responsive Travel & Tourism Template</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="SkyLine Travel & Tourism Website" name="description">
+
+    @* <link href="~/img/favicon.ico" rel="icon"> *@
+    <link href="~/img/apple-favicon.png" rel="apple-touch-icon">
+    <link rel="icon" type="image/png" href="~/img/sl.png">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Raleway:wght@700;800&display=swap" rel="stylesheet">
+    <link href="~/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="~/vendor/slick/slick.css" rel="stylesheet">
+    <link href="~/vendor/slick/slick-theme.css" rel="stylesheet">
+    <link href="~/vendor/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel= "stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link href="~/css/style.css" rel="stylesheet">
+    <link href="~/css/hover-style.css" rel="stylesheet">
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+    <!-- ===== HEADER START ===== -->
+    <header id="header" class="d-flex align-items-center justify-content-between px-4 py-3 shadow-sm"
+            style="background: linear-gradient(135deg, #001f3f, #0066ff, #00c6ff); color: #fff; position: sticky; top: 0; z-index: 1000;">
+
+        <!-- LOGO -->
+        <a href="/Customer/Home/Index" class="logo-text text-decoration-none d-flex align-items-center">
+            <span class="sky" style="font-family: 'Great Vibes', cursive; font-size: 42px;
+                background: linear-gradient(90deg, #ffcc00, #ff6600);
+                -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-right: 6px;">
+                Sky
+            </span>
+            <span class="line" style="font-family: 'Raleway', sans-serif; font-weight: 800; font-size: 30px;
+                background: linear-gradient(90deg, #00c6ff, #1e90ff);
+                -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                LINE
+            </span>
+            <i class="fa fa-plane ms-2" style="color: #ffcc00;"></i>
+        </a>
+
+        <!-- ===== PROFILE DROPDOWN ===== -->
+        <div class="dropdown creative-profile" style="position: absolute; top: 18px; right: 25px;">
+            <a class="profile-btn d-flex align-items-center text-decoration-none dropdown-toggle"
+               href="#" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false"
+               style="background: rgba(255, 255, 255, 0.1); padding: 4px 10px; border-radius: 50px; transition: 0.3s;">
+                <div class="profile-glow" style="position: relative;">
+                    <img src="~/UserImg/f1a7ab00-e600-41f1-99f6-d16a61f03942.jpg"
+                         alt="Profile" width="32" height="32"
+                         class="rounded-circle border border-light shadow-sm">
+                </div>
+                <span class="ms-2 fw-semibold text-white small">@displayName</span>
+                <i class="bi bi-chevron-down ms-1 text-white small"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" aria-labelledby="profileDropdown"
+                style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); border-radius: 10px; min-width: 140px;">
+
+                @if (isAuthenticated)
+                {
+                    <a class="dropdown-item py-2 px-3" href="/Identity/Account/Profile?userId=@UserManager.GetUserId(User!)">
+                        <i class="fa fa-user me-2 text-info"></i> View Profile
+                    </a>
+
+
+                    @if (showDashboard)
+                    {
+                        <li>
+                            <a class="dropdown-item py-2 px-3" href="/Admin/Home/Index">
+                                <i class="fa fa-tachometer me-2 text-primary"></i> Dashboard
+                            </a>
+                        </li>
+                    }
+                    else if (showCustomerLinks)
+                    {
+                        <li>
+                            <a class="dropdown-item py-2 px-3" href="/Profile/MyPoints">
+                                <i class="fa fa-star me-2 text-warning"></i> My Points
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item py-2 px-3" href="/Customer/Booking/MyBooking?userId=@UserManager.GetUserId(User!)">
+                                <i class="fa fa-plane me-2 text-success"></i> My Flights
+                            </a>
+
+                        </li>
+                    }
+
+                    <li><hr class="dropdown-divider" /></li>
+                    <li>
+                        <form asp-area="Identity" asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+                            <button type="submit" class="dropdown-item py-2 px-3 w-100 text-start">
+                                <i class="fa fa-sign-out me-2 text-danger"></i> Logout
+                            </button>
+                        </form>
+                    </li>
+                }
+                else
+                {
+                    <li>
+                        <a class="dropdown-item py-2 px-3" href="/Identity/Account/Login">
+                            <i class="fa fa-sign-in me-2 text-primary"></i> Login
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item py-2 px-3" href="/Identity/Account/Register">
+                            <i class="fa fa-user-plus me-2 text-success"></i> Register
+                        </a>
+                    </li>
+                }
+            </ul>
+
+
+
+        </div>
+
+        <!-- MAIN MENU -->
+        <nav class="main-menu top-menu">
+            <ul class="d-flex gap-3 list-unstyled mb-0">
+                <li class="active">
+                    <a asp-area="Customer"
+                       asp-controller="Home"
+                       asp-action="Index">
+                        Home
+                    </a>
+                </li>
+                <li><a href="/Customer/Home/Details">About Us</a></li>  
+                @* <li><a href="/Customer/Home/NotFoundPage">Error  Page </a></li> *@
+                @* <li><a href="/Customer/Home/Results">Flights</a></li> *@
+               @* <li><a href="/Customer/Home/Booking">Booking</a></li> *@
+            </ul>
+        </nav>
+
+        <div class="mobile-menu-btn"><i class="fa fa-bars"></i></div>
+    </header>
+    <!-- ===== HEADER END ===== -->
+
+    <main role="main" class="pb-3 flex-fill">
+        @RenderBody()
+    </main>
+
+    <div id="footer" class="text-white pt-4 pb-3 text-center" style="background: linear-gradient(135deg, #001f3f, #0066ff);">
+        <ul class="list-inline mb-2">
+            <li class="list-inline-item"><a href="#" class="text-white">Home</a></li>
+            <li class="list-inline-item"><a href="#" class="text-white">About</a></li>
+            <li class="list-inline-item"><a href="#" class="text-white">Terms</a></li>
+            <li class="list-inline-item"><a href="#" class="text-white">Contact</a></li>
+        </ul>
+        <p class="mb-0">© 2025 SkyLine. All Rights Reserved.</p>
+        <p class="mb-0">Designed with ❤️ by HTML Codex</p>
+    </div>
+
+    <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+   
+    <script src="~/js/main.js"></script>
+
+   
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

@@ -1,0 +1,70 @@
+﻿@model List<AirPort>
+
+@section Scripts {
+    @if (@TempData["success-notification"] is not null)
+    {
+        <script>
+            toastr.success('@TempData["success-notification"]')
+        </script>
+    }
+    else if (@TempData["error-notification"] is not null)
+    {
+        <script>
+            toastr.error('@TempData["error-notification"]')
+        </script>
+    }
+}
+
+<div class="container mt-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold" style="color:#1a2a6c;">Airports List</h2>
+        <a href="/Admin/Airport/CreateAirport" class="btn btn-primary" style="border-radius:30px;">
+            + Add New Airport
+        </a>
+    </div>
+
+    <div class="card shadow-sm p-3" style="border-radius:15px;">
+        <table class="table table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Code</th>
+                    <th>Terminal</th>
+                    <th>City</th>
+                    <th style="width:150px;">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var a in Model)
+                {
+                    <tr>
+                        <td>@a.Id</td>
+                        <td>@a.Name</td>
+                        <td>@a.Code</td>
+                        <td>@a.terminal</td>
+
+                        <td>@(a.city != null ? a.city.Name : "—")</td>
+
+                        <td>
+                            <div class="d-flex gap-2">
+                                <a href="/Admin/Airport/AirportUpdate/@a.Id"
+                                   class="btn btn-sm btn-warning">Edit</a>
+
+                                <a href="/Admin/Airport/Delete/@a.Id"
+                                   class="btn btn-sm btn-danger"
+                                   onclick="return confirm('Are you sure you want to delete this airport?');">
+                                    Delete
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+    </div>
+
+</div>

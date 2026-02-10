@@ -1,0 +1,117 @@
+﻿@model Airline
+
+<div class="container mt-4">
+
+    <h2 class="mb-4">Create New Airline</h2>
+
+    <form asp-action="CreateAirline" method="post" enctype="multipart/form-data" id="airlineForm">
+
+        <!-- Summary Validation -->
+        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+        <div class="mb-3">
+            <label>Airline Code</label>
+            <input asp-for="Code" class="form-control" />
+            <span asp-validation-for="Code" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label>Airline Name</label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label>Description</label>
+            <textarea asp-for="Description" class="form-control"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label>Logo</label>
+            <input asp-for="logo" type="file" class="form-control" accept="image/*" />
+            <span asp-validation-for="logo" class="text-danger"></span>
+        </div>
+
+        <!-- Buttons -->
+        <div class="mt-4 d-flex gap-3">
+            <button type="button" class="btn-confirm" onclick="submitWithAlert()">
+                <i class="fas fa-check-circle me-1"></i> Confirm
+            </button>
+
+            <a href="/Admin/Airline/Airlines" class="btn-cancel">
+                <i class="fas fa-times-circle me-1"></i> Cancel
+            </a>
+        </div>
+
+    </form>
+</div>
+
+
+<style>
+    .btn-confirm, .btn-cancel {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-weight: 600;
+        padding: 10px 20px;
+        border-radius: 7px;
+        font-size: 15px;
+        cursor: pointer;
+        transition: 0.25s ease-in-out;
+        border: none;
+        text-decoration: none;
+    }
+
+    .btn-confirm {
+        background: #0d6efd;
+        color: #fff;
+    }
+
+        .btn-confirm:hover {
+            background: #0b5ed7;
+            transform: scale(1.05);
+        }
+
+    .btn-cancel {
+        background: #dc3545;
+        color: #fff;
+    }
+
+        .btn-cancel:hover {
+            background: #bb2d3b;
+            transform: scale(1.05);
+        }
+</style>
+
+
+<!-- Scripts لازمة لل Validation -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<script>
+    function submitWithAlert() {
+        var form = $("#airlineForm");
+
+        if (!form.valid()) {
+            return; // هيظهر الأخطاء وميكملش
+        }
+
+        Swal.fire({
+            title: "Create Airline?",
+            text: "Are you sure you want to save it?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#0d6efd",
+            cancelButtonColor: "#dc3545",
+            confirmButtonText: "Yes, Create ✅",
+            cancelButtonText: "Cancel ❌"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+    }
+</script>

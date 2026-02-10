@@ -1,0 +1,111 @@
+﻿@model CreateUserVM22   
+
+@{
+    ViewData["Title"] = "Create User";
+}
+
+<div class="container mt-4">
+    <div class="card shadow p-4" style="border-radius: 18px;">
+        <h3 class="fw-bold mb-3">Create New User</h3>
+
+        <form asp-action="CreateUser" method="post" enctype="multipart/form-data">
+            <div class="row g-3">
+
+                <!-- Name -->
+                <div class="col-md-6">
+                    <label asp-for="Name" class="form-label fw-semibold"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <!-- Username -->
+                <div class="col-md-6">
+                    <label asp-for="UserName" class="form-label fw-semibold"></label>
+                    <input asp-for="UserName" class="form-control" />
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+                </div>
+
+                <!-- Email -->
+                <div class="col-md-6">
+                    <label asp-for="Email" class="form-label fw-semibold"></label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <!-- Phone -->
+                <div class="col-md-6">
+                    <label asp-for="PhoneNumber" class="form-label fw-semibold"></label>
+                    <input asp-for="PhoneNumber" class="form-control" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+
+                <!-- Password -->
+                <div class="col-md-6">
+                    <label asp-for="Password" class="form-label fw-semibold"></label>
+                    <input asp-for="Password" class="form-control" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="col-md-6">
+                    <label asp-for="ConfirmPassword" class="form-label fw-semibold"></label>
+                    <input asp-for="ConfirmPassword" class="form-control" />
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+
+                <!-- Street -->
+                <div class="col-md-6">
+                    <label asp-for="Street" class="form-label fw-semibold"></label>
+                    <input asp-for="Street" class="form-control" />
+                </div>
+
+                <!-- City -->
+                <div class="col-md-6">
+                    <label asp-for="City" class="form-label fw-semibold"></label>
+                    <input asp-for="City" class="form-control" />
+                </div>
+
+                <!-- State -->
+                <div class="col-md-6">
+                    <label asp-for="State" class="form-label fw-semibold"></label>
+                    <input asp-for="State" class="form-control" />
+                </div>
+
+                <!-- Zip -->
+                <div class="col-md-6">
+                    <label asp-for="ZipCode" class="form-label fw-semibold"></label>
+                    <input asp-for="ZipCode" class="form-control" />
+                </div>
+
+                <!-- Role -->
+                <div class="col-md-6">
+                    <label asp-for="Role" class="form-label fw-semibold"></label>
+                    <select asp-for="Role" class="form-select">
+                        <option value="SuperAdminRole">Super Admin</option>
+                        <option value="AdminRole">Admin</option>
+                        <option value="CompanyRole">Company</option>
+                        <option value="CustomerRole">Customer</option>
+                    </select>
+                </div>
+
+                <!-- Image Upload -->
+                <div class="col-md-6">
+                    <label asp-for="Image" class="form-label fw-semibold">Profile Image</label>
+                    <input asp-for="Image" type="file" class="form-control" />
+                </div>
+
+            </div>
+
+            <!-- Buttons -->
+            <div class="d-flex justify-content-end mt-4 gap-2">
+                <a href="/Admin/User/AllUsers" class="btn btn-secondary px-4">Cancel</a>
+                <button type="submit" class="btn btn-primary px-4">Confirm</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

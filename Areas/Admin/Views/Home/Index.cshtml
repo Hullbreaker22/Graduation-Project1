@@ -1,0 +1,371 @@
+﻿<main class="dark-theme">
+    <div class="container-fluid px-4">
+        <ol class="breadcrumb mb-4 shadow-sm p-3 bg-dark-royal rounded">
+            <li class="breadcrumb-item active text-white">Dashboard</li>
+        </ol>
+
+        <div class="row">
+            <!-- Total Flights -->
+            <div class="col-xl-3 col-md-6">
+                <div class="card bg-dark-royal text-white mb-4 card-hover">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="me-3">
+                            <i class="fas fa-plane fa-2x"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-0">@ViewBag.TotalFlights</h5>
+                            <small>Total Flights</small>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex align-items-center justify-content-between">
+                        <a class="small text-white stretched-link" href="/Customer/Home/Results">View Details</a>
+                        <div class="small text-white"><i class="fas fa-arrow-right"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Low Seats Flights -->
+            <div class="col-xl-3 col-md-6">
+                <div class="card bg-dark-warning text-white mb-4 card-hover">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="me-3">
+                            <i class="fas fa-exclamation-triangle fa-2x"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-0">@ViewBag.LowSeatsFlights</h5>
+                            <small>Low Seats Flights</small>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex align-items-center justify-content-between">
+                        <a class="small text-white stretched-link" href="/Customer/Home/Results">View Details</a>
+                        <div class="small text-white"><i class="fas fa-arrow-right"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Full Flights -->
+            <div class="col-xl-3 col-md-6">
+                <div class="card bg-dark-success text-white mb-4 card-hover">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="me-3">
+                            <i class="fas fa-check fa-2x"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-0">@ViewBag.FullFlights</h5>
+                            <small>Full Flights</small>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex align-items-center justify-content-between">
+                        <a class="small text-white stretched-link" href="/Customer/Home/Results">View Details</a>
+                        <div class="small text-white"><i class="fas fa-arrow-right"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upcoming Flights -->
+            <div class="col-xl-3 col-md-6">
+                <div class="card bg-dark-danger text-white mb-4 card-hover">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="me-3">
+                            <i class="fas fa-clock fa-2x"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-0">@ViewBag.UpcomingFlights</h5>
+                            <small>Upcoming Flights (<1h)</small>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex align-items-center justify-content-between">
+                        <a class="small text-white stretched-link" href="/Customer/Home/Results">View Details</a>
+                        <div class="small text-white"><i class="fas fa-arrow-right"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="row">
+            <div class="col-xl-6">
+                <div class="card mb-4 shadow-sm bg-dark-card">
+                    <div class="card-header bg-dark-royal text-white fw-bold d-flex align-items-center">
+                        <i class="fas fa-chart-area me-2"></i>
+                        Flight Trends
+                    </div>
+                    <div class="card-body">
+                        <canvas id="myAreaChart" height="40"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-6">
+                <div class="card mb-4 shadow-sm bg-dark-card">
+                    <div class="card-header bg-dark-royal text-white fw-bold d-flex align-items-center">
+                        <i class="fas fa-chart-bar me-2"></i>
+                        Flight Distribution
+                    </div>
+                    <div class="card-body">
+                        <canvas id="myBarChart" height="40"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="card mb-4 shadow-sm bg-dark-card">
+            <div class="card-header bg-dark-royal text-white fw-bold d-flex align-items-center">
+                <i class="fas fa-table me-2"></i> Flights Data
+            </div>
+
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="flightsTable" class="table table-hover table-dark">
+                        <thead class="bg-dark-royal text-white">
+                            <tr class="text-center">
+                                <th>Flight Code</th>
+                                <th>Translated Code</th>
+                                <th>Duration</th>
+                                <th>Leaving Time</th>
+                                <th>Arriving Time</th>
+                                <th>Leaving Airport</th>
+                                <th>Arrive Airport</th>
+                                <th>Airline</th>
+                                <th>Price</th>
+                                <th>Available Seats</th>
+                                <th>Stop Points</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var flight in ViewBag.Flights as List<Flight>)
+                            {
+                                <tr class="table-row-hover">
+                                    <td>@flight.Flight_Code</td>
+                                    <td>@flight.Transate_FlightCode</td>
+                                    <td>@flight.Duration</td>
+                                    <td>@flight.Leaving_Time.ToString("yyyy-MM-dd HH:mm")</td>
+                                    <td>@flight.Arriving_Time.ToString("yyyy-MM-dd HH:mm")</td>
+                                    <td>@flight.LeavingAirport?.Name</td>
+                                    <td>@flight.ArriveAirport?.Name</td>
+                                    <td>@flight.AirLine?.Name</td>
+                                    <td class="text-success fw-bold">@flight.Price.ToString("C")</td>
+                                    <td>
+                                        <span class="badge @(flight.AvailableSeats < 10 ? "bg-warning" : "bg-success")">
+                                            @flight.AvailableSeats
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">@flight.StopPoints</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <a class="btn btn-sm btn-royal text-white fw-bold shadow" style="border-radius: 10px;" href="/Customer/Home/Details/@flight.Flight_Id_PK">
+                                            <i class="fas fa-eye me-1"></i>Details
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <nav class="d-flex justify-content-center mt-4">
+                    <ul class="pagination pagination-lg">
+
+                        @if (ViewBag.CurrentPage > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link bg-dark-royal text-white border-0" href="/Admin/Home/Index?page=@(ViewBag.CurrentPage - 1)">
+                                    <i class="fas fa-chevron-left me-1"></i>Previous
+                                </a>
+                            </li>
+                        }
+
+                        @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                                <a class="page-link bg-dark-royal text-white border-0" href="/Admin/Home/Index?page=@i">@i</a>
+                            </li>
+                        }
+
+                        @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                        {
+                            <li class="page-item">
+                                <a class="page-link bg-dark-royal text-white border-0" href="/Admin/Home/Index?page=@(ViewBag.CurrentPage + 1)">
+                                    Next<i class="fas fa-chevron-right ms-1"></i>
+                                </a>
+                            </li>
+                        }
+
+                    </ul>
+                </nav>
+
+            </div>
+        </div>
+    </div>
+</main>
+
+<style>
+    .dark-theme {
+        background-color: #121212;
+        color: #e0e0e0;
+        min-height: 100vh;
+    }
+
+    .bg-dark-royal {
+        background: linear-gradient(135deg, #6a0dad, #4b0082) !important;
+    }
+
+    .bg-dark-card {
+        background-color: #1e1e1e !important;
+        color: #e0e0e0;
+        border: 1px solid #333;
+    }
+
+    .bg-dark-warning {
+        background: linear-gradient(135deg, #ff9800, #e65100) !important;
+    }
+
+    .bg-dark-success {
+        background: linear-gradient(135deg, #4caf50, #2e7d32) !important;
+    }
+
+    .bg-dark-danger {
+        background: linear-gradient(135deg, #f44336, #c62828) !important;
+    }
+
+    .btn-royal {
+        background: linear-gradient(135deg, #6a0dad, #4b0082);
+        border: none;
+    }
+
+        .btn-royal:hover {
+            background: linear-gradient(135deg, #7b1fa2, #5e35b1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(106, 13, 173, 0.4);
+        }
+
+    .card-hover {
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(106, 13, 173, 0.3);
+        }
+
+    .table-dark {
+        background-color: #1e1e1e;
+        color: #e0e0e0;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .table-row-hover:hover {
+        background-color: #2d2d2d !important;
+        cursor: pointer;
+        transform: scale(1.01);
+        transition: all 0.2s ease;
+    }
+
+    .pagination .page-link {
+        border-radius: 8px;
+        margin: 2px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+        .pagination .page-link:hover {
+            background: linear-gradient(135deg, #7b1fa2, #5e35b1) !important;
+            transform: translateY(-2px);
+        }
+
+    .pagination .page-item.active .page-link {
+        background: linear-gradient(135deg, #7b1fa2, #5e35b1) !important;
+        border-color: #6a0dad;
+        box-shadow: 0 4px 8px rgba(106, 13, 173, 0.4);
+    }
+
+    .badge {
+        font-size: 0.8em;
+        padding: 5px 10px;
+        border-radius: 12px;
+    }
+
+    /* Custom scrollbar for dark theme */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #1e1e1e;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #6a0dad;
+        border-radius: 4px;
+    }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #7b1fa2;
+        }
+
+    .card-hover {
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(106, 13, 173, 0.8), 0 8px 15px rgba(106, 13, 173, 0.5);
+        }
+
+    .btn-royal {
+        background: linear-gradient(135deg, #6a0dad, #4b0082);
+        border: none;
+        box-shadow: 0 0 5px #6a0dad;
+        transition: all 0.3s ease;
+    }
+
+        .btn-royal:hover {
+            background: linear-gradient(135deg, #7b1fa2, #5e35b1);
+            box-shadow: 0 0 15px #7b1fa2, 0 4px 8px rgba(106, 13, 173, 0.4);
+            transform: translateY(-2px);
+        }
+
+    .badge {
+        font-size: 0.8em;
+        padding: 5px 10px;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+        .badge.bg-success:hover {
+            box-shadow: 0 0 8px #4caf50, 0 0 15px #2e7d32;
+        }
+
+        .badge.bg-warning:hover {
+            box-shadow: 0 0 8px #ff9800, 0 0 15px #e65100;
+        }
+
+        .badge.bg-danger:hover {
+            box-shadow: 0 0 8px #f44336, 0 0 15px #c62828;
+        }
+
+    .table-row-hover:hover {
+        background-color: #2d2d2d !important;
+        cursor: pointer;
+        transform: scale(1.01);
+        box-shadow: 0 0 15px rgba(106, 13, 173, 0.6);
+        transition: all 0.2s ease;
+    }
+
+
+
+
+
+
+
+</style>

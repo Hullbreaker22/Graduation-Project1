@@ -1,0 +1,82 @@
+﻿@model CreateUser
+
+<div class="container mt-4">
+    <h2 class="mb-4">Edit User</h2>
+
+    <form asp-action="EditUser" asp-controller="User" method="post" enctype="multipart/form-data">
+
+        <input type="hidden" asp-for="Id" name="Id" />
+
+        <div class="row">
+
+         
+            <div class="col-md-6 mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label asp-for="UserName" class="form-label"></label>
+                <input asp-for="UserName" class="form-control" />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label asp-for="PhoneNumber" class="form-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label asp-for="Street" class="form-label"></label>
+                <input asp-for="Street" class="form-control" />
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label asp-for="City" class="form-label"></label>
+                <input asp-for="City" class="form-control" />
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label asp-for="State" class="form-label"></label>
+                <input asp-for="State" class="form-control" />
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label asp-for="ZipCode" class="form-label"></label>
+                <input asp-for="ZipCode" class="form-control" />
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="Role" class="form-label fw-semibold"></label>
+                <select asp-for="Role" class="form-select">
+                    <option value="SuperAdminRole">Super Admin</option>
+                    <option value="AdminRole">Admin</option>
+                    <option value="CompanyRole">Company</option>
+                    <option value="CustomerRole">Customer</option>
+                </select>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="form-label">User Image</label>
+                <input type="file" name="ImageFile" class="form-control" />
+
+                @if (!string.IsNullOrEmpty(Model.UserImage))
+                {
+                    <img src="~/Uploads/@Model.UserImage" class="img-thumbnail mt-2" width="120" />
+                }
+            </div>
+
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+        <a href="/Admin/User/Index" class="btn btn-secondary mt-3">Cancel</a>
+
+    </form>
+</div>

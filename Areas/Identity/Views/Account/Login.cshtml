@@ -1,0 +1,156 @@
+﻿@model SkyLine.ViewModels.UserLogin
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="login-wrapper d-flex justify-content-center align-items-center py-5">
+    <div class="login-card shadow-lg p-5 rounded-4">
+        <h2 class="text-center mb-4 fw-bold text-light">Welcome Back to <span class="text-sky">SkyLine</span> ✈️</h2>
+
+        <form asp-action="Login" method="post">
+            <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="EmailOrUserName" class="form-control" placeholder="Email or Username" />
+                <label asp-for="EmailOrUserName"></label>
+                <span asp-validation-for="EmailOrUserName" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Password" class="form-control" placeholder="Password" />
+                <label asp-for="Password"></label>
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="form-check">
+                    <input asp-for="RememberMe" class="form-check-input" />
+                    <label asp-for="RememberMe" class="form-check-label text-light"></label>
+                </div>
+                <a asp-action="ForgetPassword" asp-area="Identity" asp-controller="Account" class="text-info small text-decoration-none">Forgot Password?</a>
+            </div>
+
+            <div class="d-grid">
+                <button type="submit" class="btn btn-login">Log In</button>
+            </div>
+        </form>
+
+        <div class="text-center mt-4">
+            <small class="text-light">
+                Didn’t get confirmation email?
+                <a asp-action="ResendConfirmation" asp-area="Identity" asp-controller="Account" class="text-info text-decoration-none">Confirm Email</a>
+            </small>
+            <br />
+            <small class="text-light">
+                New here?
+                <a asp-action="Register" class="text-info text-decoration-none">Create Account</a>
+            </small>
+            <br />
+            <small class="text-light">
+                <a asp-action="ReadMe" class="text-info text-decoration-none">Read Me</a>
+            </small>
+        </div>
+    </div>
+</div>
+
+<!-- Inline CSS just like Register page -->
+<style>
+    .login-wrapper {
+        background: linear-gradient(135deg, #001f3f, #004080, #000000);
+        min-height: calc(100vh - 300px);
+    }
+
+    .login-card {
+        background: rgba(0, 20, 40, 0.95);
+        border: 1px solid rgba(0, 150, 255, 0.3);
+        color: #fff;
+        max-width: 450px;
+        width: 100%;
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+    }
+
+    .text-sky {
+        color: #00b4d8;
+    }
+
+    .form-control {
+        background-color: rgba(255, 255, 255, 0.08);
+        border: none;
+        color: #e0f7ff; /* Bright text color when typing */
+        border-radius: 10px;
+        height: 50px;
+        transition: 0.3s;
+    }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5); /* Dim placeholder */
+        }
+
+        .form-control:focus {
+            background-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 10px #00aaff;
+            color: #ffffff; /* ensure focused input stays bright white */
+        }
+
+    .form-check-input {
+        border: 1px solid #00b4d8;
+        background-color: transparent;
+    }
+
+        .form-check-input:checked {
+            background-color: #00b4d8;
+            border-color: #00b4d8;
+        }
+
+    .btn-login {
+        background: linear-gradient(90deg, #0077b6, #00b4d8);
+        color: #fff;
+        font-weight: 600;
+        border-radius: 30px;
+        padding: 12px;
+        transition: all 0.3s ease;
+        border: none;
+    }
+
+        .btn-login:hover {
+            background: linear-gradient(90deg, #00b4d8, #0077b6);
+            transform: scale(1.03);
+            box-shadow: 0 0 15px #00aaff;
+        }
+
+    label {
+        color: #9cc3ff;
+    }
+
+    .text-info {
+        color: #00b4d8 !important;
+    }
+
+    .text-danger {
+        font-size: 13px;
+    }
+
+    .small {
+        font-size: 0.9rem;
+    }
+</style>
+
+@section Scripts {
+    @if (@TempData["success-notification"] is not null)
+    {
+        <script>
+            toastr.success('@TempData["success-notification"]')
+        </script>
+    }
+    else if (@TempData["error-notification"] is not null)
+    {
+        <script>
+            toastr.error('@TempData["error-notification"]')
+        </script>
+    }
+
+}
+
+
+

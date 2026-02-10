@@ -1,0 +1,328 @@
+﻿@model List<ApplicationUser>
+
+@{
+    ViewData["Title"] = "Users";
+}
+
+<style>
+    .users-container {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .header-section {
+        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 30px;
+        color: white;
+    }
+
+    .user-card {
+        background: #f8fafc;
+        border: 2px solid #e2e8f0;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .user-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(180deg, #3b82f6, #1e3a8a);
+            transition: width 0.3s ease;
+        }
+
+        .user-card:hover {
+            transform: translateY(-5px);
+            border-color: #3b82f6;
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+        }
+
+            .user-card:hover::before {
+                width: 8px;
+            }
+
+    .user-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: 3px solid #3b82f6;
+        padding: 2px;
+        background: white;
+    }
+
+    .user-info-section {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+
+    .user-details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+
+    .detail-item {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .detail-label {
+        font-size: 0.8rem;
+        color: #64748b;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    .detail-value {
+        font-weight: 500;
+        color: #1e293b;
+    }
+
+    .status-badges {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .badge {
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        border: 2px solid;
+    }
+
+    .badge-email-confirmed {
+        background: #f0f9ff;
+        color: #0369a1;
+        border-color: #bae6fd;
+    }
+
+    .badge-email-pending {
+        background: #fef2f2;
+        color: #dc2626;
+        border-color: #fecaca;
+    }
+
+    .badge-account-available {
+        background: #f0fdf4;
+        color: #15803d;
+        border-color: #bbf7d0;
+    }
+
+    .badge-account-locked {
+        background: #fef2f2;
+        color: #dc2626;
+        border-color: #fecaca;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 15px;
+    }
+
+    .btn-action {
+        padding: 8px 20px;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: 2px solid;
+    }
+
+    .btn-edit {
+        background: #dbeafe;
+        color: #1e40af;
+        border-color: #3b82f6;
+    }
+
+        .btn-edit:hover {
+            background: #3b82f6;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+    .btn-delete {
+        background: #fef2f2;
+        color: #dc2626;
+        border-color: #ef4444;
+    }
+
+        .btn-delete:hover {
+            background: #dc2626;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+    .btn-new-user {
+        background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+        color: white;
+        padding: 12px 25px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
+    }
+
+        .btn-new-user:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(30, 58, 138, 0.4);
+            color: white;
+        }
+
+    .section-title {
+        color: #1e3a8a;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .section-subtitle {
+        color: #64748b;
+        font-size: 1rem;
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .user-details-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .user-info-section {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .action-buttons {
+            justify-content: center;
+        }
+
+        .header-section {
+            text-align: center;
+        }
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="users-container">
+        <!-- Header Section -->
+        <div class="header-section">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h3 class="fw-bold mb-2">Users Management</h3>
+                    <p class="section-subtitle mb-0">Manage all user accounts and permissions</p>
+                </div>
+                <a href="/Admin/User/CreateUser" class="btn-new-user">+ New User</a>
+            </div>
+        </div>
+
+        <!-- Users List -->
+        <div class="users-list">
+            @foreach (var user in Model)
+            {
+                <div class="user-card">
+                    <div class="user-info-section">
+                        <div>
+                            @if (!string.IsNullOrEmpty(user.Image))
+                            {
+                                <img src="~/UserImg/@user.Image" class="user-avatar" alt="@user.Name" />
+                            }
+                            else
+                            {
+                                <img src="~/img/default-user.png" class="user-avatar" alt="Default User" />
+                            }
+                        </div>
+                        <div>
+                            <h5 class="section-title mb-1">@user.Name</h5>
+                            <p class="text-muted mb-0">@user.Email</p>
+                        </div>
+                    </div>
+
+                    <div class="user-details-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">PHONE</span>
+                            <span class="detail-value">@user.PhoneNumber</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">CITY</span>
+                            <span class="detail-value">@user.City</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">STATE</span>
+                            <span class="detail-value">@user.State</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">STREET</span>
+                            <span class="detail-value">@user.Street</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">ZIP CODE</span>
+                            <span class="detail-value">@user.ZipCode</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="status-badges">
+                            <!-- Email Status -->
+                            @if (user.EmailConfirmed)
+                            {
+                                <span class="badge badge-email-confirmed">✓ Email Confirmed</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-email-pending">✗ Email Not Confirmed</span>
+                            }
+
+                         
+                            @if (!user.LockoutEnabled)
+                            {
+                                <a asp-area="Admin"
+                                   asp-controller="User"
+                                   asp-action="LockUnLock"
+                                   asp-route-id="@user.Id"
+                                   class="badge badge-account-available"
+                                   style="cursor:pointer; text-decoration:none;">
+                                    ✓ Account Available
+                                </a>
+                            }
+                            else
+                            {
+                                <a asp-area="Admin"
+                                   asp-controller="User"
+                                   asp-action="LockUnLock"
+                                   asp-route-id="@user.Id"
+                                   class="badge badge-account-locked"
+                                   style="cursor:pointer; text-decoration:none;">
+                                    ✗ Account Locked
+                                </a>
+                            }
+
+                        </div>
+
+                        <div class="action-buttons">
+                            <a class="btn-action btn-edit asp-area="Admin" asp-controller="User" asp-action="EditUser" asp-route-id="@user.Id">Edit</a>
+                            <a class="btn-action btn-delete" asp-area="Admin" asp-controller="User" asp-action="DeleteUser" asp-route-id="@user.Id">Delete</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

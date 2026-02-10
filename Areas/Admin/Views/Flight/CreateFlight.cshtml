@@ -1,0 +1,172 @@
+﻿@model MixedClass
+
+@{
+    ViewData["Title"] = "Create Flight";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Create New Flight </h2>
+
+    <form asp-action="CreateFlight" method="post" id="createForm">
+
+        <div class="row">
+
+            <div class="col-md-6 mb-3">
+                <label>Flight Code</label>
+                <input asp-for="@Model.flight.Flight_Code" class="form-control" name="Flight_Code" />
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label>Translate Code</label>
+                <input asp-for="@Model.flight.Transate_FlightCode" class="form-control" name="Transate_FlightCode" />
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label>Duration (Hours)</label>
+                <input asp-for="@Model.flight.Duration" class="form-control" name="Duration" />
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label>Price</label>
+                <input asp-for="@Model.flight.Price" class="form-control" name="Price" />
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label>Available Seats</label>
+                <input asp-for="@Model.flight.AvailableSeats" class="form-control" name="AvailableSeats" />
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label>Stop Points</label>
+                <input asp-for="@Model.flight.StopPoints" class="form-control" name="StopPoints" />
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label>Leaving Time</label>
+                <input asp-for="@Model.flight.Leaving_Time" type="datetime-local" class="form-control" name="Leaving_Time" />
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label>Arrival Time</label>
+                <input asp-for="@Model.flight.Arriving_Time" type="datetime-local" class="form-control" name="Arriving_Time" />
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label>Leaving Airport</label>
+                <select asp-for="@Model.flight.Leaving_Airport_ID" class="form-select" name="Leaving_Airport_ID">
+                    @foreach (var item in Model.airport)
+                    {
+                        <option value="@item.Id">@item.Name</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label>Arrival Airport</label>
+                <select asp-for="@Model.flight.Arrive_Airport_ID" class="form-select" name="Arrive_Airport_ID">
+                    @foreach (var item in Model.airport)
+                    {
+                        <option value="@item.Id">@item.Name</option>
+                    }
+
+                </select>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label>AirLine</label>
+                <select asp-for="@Model.flight.AirLine_ID" class="form-select" name="AirLine_ID">
+                    @foreach (var item in Model.airline)
+                    {
+                        <option value="@item.Id">@item.Name</option>
+                    }
+                </select>
+            </div>
+
+        </div>
+
+        <!-- Dragon Trigger Button -->
+        <div class="mt-4 d-flex gap-3">
+            <!-- Confirm Button -->
+            <button type="button" class="btn-confirm" onclick="confirmCreate()">
+                <i class="fas fa-check-circle me-1"></i> Confirm
+            </button>
+
+            <!-- Cancel Button -->
+            <a href="/Admin/Flight/Flights" class="btn-cancel">
+                <i class="fas fa-times-circle me-1"></i> Cancel
+            </a>
+        </div>
+        </form>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function confirmCreate() {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "Do you want to create this flight?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#0d6efd",
+                cancelButtonColor: "#dc3545",
+                confirmButtonText: "Yes, Create ✅",
+                cancelButtonText: "No, Cancel ❌"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById("createForm").submit();
+                }
+            });
+        }
+    </script>
+    <style>
+        .btn-confirm, .btn-cancel {
+            padding: 10px 22px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #fff;
+        }
+
+        /* Confirm - Blue */
+        .btn-confirm {
+            background-color: #0d6efd;
+        }
+
+            .btn-confirm:hover {
+                background-color: #0b5ed7;
+                transform: translateY(-2px);
+            }
+
+        /* Cancel - Red */
+        .btn-cancel {
+            background-color: #dc3545;
+            text-decoration: none;
+        }
+
+            .btn-cancel:hover {
+                background-color: #bb2d3b;
+                transform: translateY(-2px);
+            }
+    </style>
+
+</div>
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    function confirmCreate() {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "Do you want to create this flight?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#0d6efd",
+            cancelButtonColor: "#dc3545",
+            confirmButtonText: "Yes, Create ✅",
+            cancelButtonText: "No, Ca

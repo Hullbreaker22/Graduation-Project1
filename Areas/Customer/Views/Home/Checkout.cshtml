@@ -1,0 +1,546 @@
+﻿@using Newtonsoft.Json
+<body>
+    <div class="booking-container">
+        <!-- HEADER -->
+        <div class="booking-header">
+            <h1>Multi-Passenger Flight Booking</h1>
+            <p>Book flights for your entire group in one simple process</p>
+        </div>
+
+        <!-- STEPS -->
+        <div class="booking-steps">
+            <div class="step active">
+                <div class="step-number">1</div>
+                <span>Passenger Details</span>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <span>Seat Selection</span>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <span>Payment</span>
+            </div>
+        </div>
+
+        <!-- FORM -->
+        <form id="bookingForm" method="post" action="/Customer/Home/SubmitBooking" class="booking-form">
+            <!-- PASSENGER INFORMATION -->
+            <div class="form-section">
+                <h2 class="section-title">Passenger Information</h2>
+
+                <div class="passengers-count">
+                    <label for="passengerCount">Number of Passengers:</label>
+                    <select id="passengerCount" name="PassengerCount" onchange="updatePassengerForms()">
+                        <option value="1">1 Passenger</option>
+                        <option value="2">2 Passengers</option>
+                        <option value="3">3 Passengers</option>
+                        <option value="4">4 Passengers</option>
+                        <option value="5">5 Passengers</option>
+                        <option value="6">6 Passengers</option>
+                    </select>
+                </div>
+
+                <input type="hidden" name="Fare_ID" value="@ViewBag.theFair" />
+
+                <div class="passengers-grid" id="passengersContainer">
+                    <!-- Passenger forms will be generated here -->
+                </div>
+            </div>
+
+            <!-- SEAT SELECTION -->
+            <div class="form-section">
+                <h2 class="section-title">Seat Selection</h2>
+                <div class="seat-selection">
+                    <div class="seat-map" id="seatMap">
+                        <!-- Seat map will be generated here -->
+                    </div>
+                    <input type="hidden" id="selectedSeatsInput" name="SelectedSeats">
+                    <div class="seat-legend">
+                        <span class="seat available"></span> Available
+                        <span class="seat seat-legend-selected"></span> Selected
+                        <span class="seat occupied"></span> Occupied
+                    </div>
+                    <input type="hidden" id="totalPriceInput" name="TotalPrice" value="0">
+
+
+                    <div style="text-align: center; margin-top: 10px;">
+                        <small>Click on available seats to select them for your passengers</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BOOKING SUMMARY -->
+            <div class="booking-summary">
+                <h3 class="summary-header">Booking Summary</h3>
+                <div class="summary-details">
+                    <div>
+                        <div class="summary-item">
+                            <span>Passengers:</span>
+                            <span id="summaryPassengers">1</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Base Fare:</span>
+                            <span id="summaryBaseFare">$400.00</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="summary-item">
+                            <span>Taxes & Fees:</span>
+                            <span id="summaryTaxes">$85.00</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Seat Selection:</span>
+                            <span id="summarySeats">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="total-amount" id="totalAmount">$485.00</div>
+                <button type="submit" class="payment-button">
+                    Proceed to Secure Payment
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f4f6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .booking-container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 12px;
+        }
+
+        .booking-header h1 {
+            margin-bottom: 5px;
+        }
+
+        .booking-header p {
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+
+        .booking-steps {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+            .step.active {
+                background: #2563eb;
+                color: white;
+            }
+
+        .step-number {
+            font-weight: bold;
+            padding: 6px 10px;
+            border-radius: 50%;
+            background: #fff;
+            color: inherit;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .passenger-card {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+            .form-group label {
+                font-size: 0.875rem;
+                margin-bottom: 4px;
+            }
+
+            .form-group input, select {
+                padding: 8px;
+                border-radius: 6px;
+                border: 1px solid #d1d5db;
+            }
+
+        .seat-map {
+            display: grid;
+            grid-template-columns: repeat(6, 50px);
+            gap: 8px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .seat {
+            width: 50px;
+            height: 50px;
+            border-radius: 6px;
+            background-color: #d1d5db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+            user-select: none;
+        }
+
+            .seat.available:hover {
+                background-color: #60a5fa;
+                color: white;
+            }
+
+            .seat.selected {
+                background-color: #2563eb;
+                color: white;
+            }
+
+            .seat.occupied {
+                background-color: #ef4444;
+                color: white;
+                cursor: not-allowed;
+            }
+
+        .seat-legend {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 10px;
+            font-size: 0.875rem;
+            color: #374151;
+        }
+
+            .seat-legend .seat {
+                width: 20px;
+                height: 20px;
+                font-size: 0;
+            }
+
+        .booking-summary {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .total-amount {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 15px 0;
+            text-align: right;
+        }
+
+        .payment-button {
+            width: 100%;
+            background-color: #2563eb;
+            color: white;
+            font-weight: 600;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+            .payment-button:hover {
+                background-color: #1d4ed8;
+            }
+
+        .seat-legend-selected {
+            background-color: #2563eb !important;
+        }
+
+    </style>
+
+    <script>
+        // البيانات الأساسية للراكب
+        const passengerData = {
+            fullName: '',
+            passportNum: '',
+            nationality: '',
+            dob: '',
+            passengerType: '0'
+        };
+
+        function updatePassengerForms() {
+            const passengerCount = parseInt(document.getElementById('passengerCount').value);
+            const container = document.getElementById('passengersContainer');
+            container.innerHTML = '';
+
+            for (let i = 1; i <= passengerCount; i++) {
+                const passengerForm = `
+                    <div class="passenger-card">
+                        <h3>Passenger ${i}</h3>
+
+                           <!-- Hidden User_Id -->
+                        <input type="hidden"
+                               name="Passengers[${i-1}].User_Id"
+                               value="@ViewBag.UserId" />
+
+                                       <!-- Hidden User_Id -->
+                        <input type="hidden"
+                               name="Passengers[${i-1}].User_Id"
+                               value="@ViewBag.UserId" />
+
+                        <!-- Hidden Seat Code -->
+                        <input type="hidden"
+                               name="Passengers[${i-1}].SeatCode"
+                               id="passenger${i}_seat" />
+
+                          <input type="hidden"
+                                name="Flight_Id_PK"
+                                value="@ViewBag.Flight.Flight_Id_PK" />
+
+
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="passenger${i}_fullName">Full Name *</label>
+                                <input type="text" id="passenger${i}_fullName"
+                                       name="Passengers[${i-1}].Full_Name"
+                                       value="${passengerData.fullName}"
+                                       onchange="updatePassengerData(${i-1}, 'fullName', this.value)"
+                                       required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="passenger${i}_passport">Passport Number *</label>
+                                <input type="text" id="passenger${i}_passport"
+                                       name="Passengers[${i-1}].Passport_Num"
+                                       value="${passengerData.passportNum}"
+                                       onchange="updatePassengerData(${i-1}, 'passportNum', this.value)"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="passenger${i}_nationality">Nationality *</label>
+                                <input type="text" id="passenger${i}_nationality"
+                                       name="Passengers[${i-1}].Nationality"
+                                       value="${passengerData.nationality}"
+                                       onchange="updatePassengerData(${i-1}, 'nationality', this.value)"
+                                       required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="passenger${i}_dob">Date of Birth *</label>
+                                <input type="date" id="passenger${i}_dob"
+                                       name="Passengers[${i-1}].DOB"
+                                       value="${passengerData.dob}"
+                                       onchange="updatePassengerData(${i-1}, 'dob', this.value)"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="passenger${i}_type">Passenger Type *</label>
+                                <select id="passenger${i}_type"
+                                        name="Passengers[${i-1}].Passenger_Type"
+                                        onchange="updatePassengerData(${i-1}, 'passengerType', this.value); updateBookingSummary()"
+                                        required>
+                                    <option value="0" ${passengerData.passengerType === '0' ? 'selected' : ''}>Adult</option>
+                                    <option value="1" ${passengerData.passengerType === '1' ? 'selected' : ''}>Child</option>
+                                    <option value="2" ${passengerData.passengerType === '2' ? 'selected' : ''}>Infant</option>
+                                    <option value="3" ${passengerData.passengerType === '3' ? 'selected' : ''}>Senior</option>
+                                    <option value="4" ${passengerData.passengerType === '4' ? 'selected' : ''}>Student</option>
+                                    <option value="5" ${passengerData.passengerType === '5' ? 'selected' : ''}>Military</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += passengerForm;
+            }
+
+            updateBookingSummary();
+        }
+
+        // دالة لتحديث بيانات الراكب
+        function updatePassengerData(index, field, value) {
+            // هنا بتكون البيانات من الفورم مباشرة
+            console.log(`Updating passenger ${index}: ${field} = ${value}`);
+
+            // لو عايز تخزن البيانات في مكان معين، ممكن تضيفها هنا
+            // لكن الفورم هيرسل البيانات مباشرة من الـ name attributes
+        }
+
+                   let occupiedSeats = @Html.Raw(JsonConvert.SerializeObject(ViewBag.OccupiedSeats));
+
+        if (!Array.isArray(occupiedSeats)) {
+            occupiedSeats = occupiedSeats ? occupiedSeats.split(',') : [];
+        }
+
+        function generateSeatMap() {
+            const seatMap = document.getElementById('seatMap');
+            seatMap.innerHTML = '';
+            const rows = ['A','B','C','D'];
+            const seatsPerRow = 6;
+
+            rows.forEach(row => {
+                for (let i = 1; i <= seatsPerRow; i++) {
+                    const seatCode = row + i;
+                    const seat = document.createElement('div');
+
+                    if (occupiedSeats.includes(seatCode)) {
+                        seat.className = 'seat occupied';
+                    } else {
+                        seat.className = 'seat available';
+                    }
+
+                    seat.textContent = seatCode;
+
+                                 seat.onclick = function () {
+                        if (seat.classList.contains('occupied')) return;
+
+                        seat.classList.toggle('selected');
+                        updateBookingSummary();
+                        updateSelectedSeatsInput(); // <<< المهم هنا
+                    };
+
+                    seatMap.appendChild(seat);
+                }
+            });
+        }
+
+               function updateBookingSummary() {
+            const passengerCount = parseInt(document.getElementById('passengerCount').value);
+            const selectedSeats = document.querySelectorAll('.seat.selected').length;
+
+            document.getElementById('summaryPassengers').textContent = passengerCount;
+
+            let baseFare = 0;
+            for (let i = 1; i <= passengerCount; i++) {
+                const passengerTypeSelect = document.getElementById(`passenger${i}_type`);
+                if (passengerTypeSelect) {
+                    const type = passengerTypeSelect.value;
+                    switch(type) {
+                        case '0': baseFare += 400; break;
+                        case '1': baseFare += 300; break;
+                        case '2': baseFare += 100; break;
+                        case '3': baseFare += 350; break;
+                        case '4': baseFare += 320; break;
+                        case '5': baseFare += 300; break;
+                        default: baseFare += 400;
+                    }
+                } else {
+                    baseFare += 400;
+                }
+            }
+
+            const taxes = passengerCount * 85;
+            const seatFees = selectedSeats * 15;
+            const total = baseFare + taxes + seatFees;
+
+            document.getElementById('summaryBaseFare').textContent = `$${baseFare.toFixed(2)}`;
+            document.getElementById('summaryTaxes').textContent = `$${taxes.toFixed(2)}`;
+            document.getElementById('summarySeats').textContent = `$${seatFees.toFixed(2)}`;
+            document.getElementById('totalAmount').textContent = `$${total.toFixed(2)}`;
+
+            // تحديث Hidden Input
+            document.getElementById('totalPriceInput').value = total.toFixed(2);
+        }
+
+
+                              function updateSelectedSeatsInput() {
+            const selectedSeats = [...document.querySelectorAll('.seat.selected')]
+                .map(s => s.textContent.trim());
+
+            const passengerCount = parseInt(document.getElementById('passengerCount').value);
+
+            for (let i = 0; i < passengerCount; i++) {
+                const input = document.getElementById(`passenger${i + 1}_seat`);
+                if (input) {
+                    input.value = selectedSeats[i] || "";
+                }
+            }
+
+            document.getElementById('selectedSeatsInput').value = selectedSeats.join(',');
+        }
+
+       
+        function validateForm() {
+            const passengerCount = parseInt(document.getElementById('passengerCount').value);
+            const selectedSeats = document.querySelectorAll('.seat.selected').length;
+
+            // التأكد من اختيار العدد الصحيح من المقاعد
+            if (selectedSeats !== passengerCount) {
+                alert(`Please select exactly ${passengerCount} seat(s) for ${passengerCount} passenger(s)`);
+                return false;
+            }
+
+            // التأكد من ملء جميع بيانات الركاب
+            for (let i = 1; i <= passengerCount; i++) {
+                const fullName = document.getElementById(`passenger${i}_fullName`).value;
+                const passport = document.getElementById(`passenger${i}_passport`).value;
+
+                if (!fullName.trim() || !passport.trim()) {
+                    alert(`Please fill all required fields for Passenger ${i}`);
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            updatePassengerForms();
+            generateSeatMap();
+            updateBookingSummary();
+
+            document.getElementById('bookingForm').addEventListener('submit', function(e){
+                // إصلاح الخطأ - إزالة حرف z
+                if (!validateForm()) {
+                    e.preventDefault(); // منع الإرسال إذا كانت البيانات غير صحيحة
+                    return false;
+                }
+
+                updateSelectedSeatsInput();
+                // الفورم هيرسل البيانات من الـ name attributes مباشرة
+                console.log('Form submitted with passenger data');
+            });
+        });
+    </script>
+</body>

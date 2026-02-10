@@ -1,0 +1,122 @@
+﻿@model FlightSegment
+
+<div class="container mt-5">
+    <div class="card shadow-sm p-4" style="border-radius:15px; max-width:700px; margin:auto;">
+        <h3 class="mb-4 text-center" style="color:#1a2a6c;">Create Flight Segment</h3>
+
+        <form asp-action="CreateSegment" method="post">
+            <div class="mb-3">
+                <label class="form-label fw-bold">Flight</label>
+                <select asp-for="Flight_ID_Fk" class="form-select">
+                    <option value="">-- Select Flight --</option>
+                    @foreach (var flight in ViewBag.Flights)
+                    {
+                        <option value="@flight.Flight_Id_PK">@flight.Flight_Code</option>
+                    }
+                </select>
+                <span asp-validation-for="Flight_ID_Fk" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Flight_Number" class="form-label fw-bold">Flight Number</label>
+                <input asp-for="Flight_Number" class="form-control" placeholder="Enter Flight Number" />
+                <span asp-validation-for="Flight_Number" class="text-danger"></span>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Departure Airport</label>
+                    <select asp-for="Departure_Airport_ID_Fk" class="form-select"
+                            asp-items="@(new SelectList(ViewBag.Airports, "Id", "Name"))">
+                        <option value="">-- Select Departure --</option>
+                    </select>
+                    <span asp-validation-for="Departure_Airport_ID_Fk" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Arrival Airport</label>
+                    <select asp-for="Arrival_Airport_ID_Fk" class="form-select"
+                            asp-items="@(new SelectList(ViewBag.Airports, "Id", "Name"))">
+                        <option value="">-- Select Arrival --</option>
+                    </select>
+                    <span asp-validation-for="Arrival_Airport_ID_Fk" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Segment_Order" class="form-label fw-bold">Segment Order</label>
+                <input asp-for="Segment_Order" class="form-control" />
+                <span asp-validation-for="Segment_Order" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="cabin" class="form-label fw-bold">Cabin</label>
+                <select asp-for="cabin" class="form-select" asp-items="Html.GetEnumSelectList<SkyLine.Models.Cabin>()">
+                    <option value="">-- Select Cabin --</option>
+                </select>
+                <span asp-validation-for="cabin" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Departure_Time" class="form-label fw-bold">Departure Time</label>
+                    <input asp-for="Departure_Time" class="form-control" type="datetime-local" />
+                    <span asp-validation-for="Departure_Time" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Arrival_Time" class="form-label fw-bold">Arrival Time</label>
+                    <input asp-for="Arrival_Time" class="form-control" type="datetime-local" />
+                    <span asp-validation-for="Arrival_Time" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Distance_KM" class="form-label fw-bold">Distance (KM)</label>
+                <input asp-for="Distance_KM" class="form-control" />
+                <span asp-validation-for="Distance_KM" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Duration_Min" class="form-label fw-bold">Duration (Minutes)</label>
+                <input asp-for="Duration_Min" class="form-control" />
+                <span asp-validation-for="Duration_Min" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Aircraft_Type" class="form-label fw-bold">Aircraft Type</label>
+                <input asp-for="Aircraft_Type" class="form-control" />
+                <span asp-validation-for="Aircraft_Type" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Layover_Duration_Min" class="form-label fw-bold">Layover Duration (Minutes)</label>
+                <input asp-for="Layover_Duration_Min" class="form-control" />
+                <span asp-validation-for="Layover_Duration_Min" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Distance_From_Origin" class="form-label fw-bold">Distance From Origin (KM)</label>
+                    <input asp-for="Distance_From_Origin" class="form-control" />
+                    <span asp-validation-for="Distance_From_Origin" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Distance_To_Destination" class="form-label fw-bold">Distance To Destination (KM)</label>
+                    <input asp-for="Distance_To_Destination" class="form-control" />
+                    <span asp-validation-for="Distance_To_Destination" class="text-danger"></span>
+                </div>
+            </div>
+
+
+            <button type="submit" class="btn btn-gradient w-100 fw-bold" style="background: linear-gradient(to right, #1a2a6c, #4a5fc1); color:#fff; padding:10px; border-radius:50px; box-shadow:0 4px 10px rgba(0,0,0,0.2); transition:0.3s;">
+                Create Segment
+            </button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+

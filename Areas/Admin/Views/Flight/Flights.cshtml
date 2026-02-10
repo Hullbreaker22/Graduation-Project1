@@ -1,0 +1,129 @@
+﻿@model List<Flight>
+
+@section Scripts {
+    @if (@TempData["success-notification"] is not null)
+    {
+        <script>
+            toastr.success('@TempData["success-notification"]')
+        </script>
+    }
+    else if (@TempData["error-notification"] is not null)
+    {
+        <script>
+            toastr.error('@TempData["error-notification"]')
+        </script>
+    }
+}
+
+<div class="container">
+    <header style="text-align:center; margin-bottom:30px; color:#000; text-shadow:none;">
+        <h1 style="font-size:2.8rem; margin-bottom:10px;"><i></i> Flight Management System</h1>
+        <p style="font-size:1.2rem; opacity:0.9;">Track, manage, and explore all your flights at a glance</p>
+    </header>
+
+    <div style="display:flex; justify-content:flex-end; margin-bottom:20px;">
+        <a href="/Admin/Flight/CreateFlight"
+           class="create-btn">
+            <i class="fas fa-plus-circle"></i> Create New Flight
+        </a>
+    </div>
+
+    <style>
+        .create-btn {
+            background: linear-gradient(to right, #fdbb2d, #f9a825);
+            color: #000;
+            padding: 12px 25px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: 0.3s ease-in-out;
+        }
+
+            .create-btn:hover {
+                transform: translateY(-5px) scale(1.05);
+                box-shadow: 0 8px 18px rgba(0,0,0,0.3);
+            }
+    </style>
+
+
+    @if (Model != null && Model.Count > 0)
+    {
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:25px;">
+            @foreach (var flight in Model)
+            {
+                <div style="background:#fff; border-radius:15px; box-shadow:0 10px 20px rgba(0,0,0,0.15); overflow:hidden; transition: transform 0.3s ease; cursor:pointer;"
+                     onmouseover="this.style.transform='translateY(-5px)';"
+                     onmouseout="this.style.transform='translateY(0)';">
+
+                    <div style="background:linear-gradient(to right,#1a2a6c,#4a5fc1); color:#fff; padding:20px; display:flex; justify-content:space-between; align-items:center;">
+                        <h3 style="margin:0; color:#000;">@flight.Flight_Code</h3>
+                        <span style="color:#000;">@flight.Leaving_Time.ToString("dd/MM/yyyy")</span>
+                    </div>
+
+                    <div style="padding:15px; color:#000;">
+                        <p><i class="fas fa-map-marker-alt"></i> <strong>From:</strong> @flight.LeavingAirport?.Name</p>
+                        <p><i class="fas fa-map-marker-alt"></i> <strong>To:</strong> @flight.ArriveAirport?.Name</p>
+                        <p><i class="fas fa-clock"></i> <strong>Duration:</strong> @flight.Duration.ToString("0.##") h</p>
+                        <p><i class="fas fa-dollar-sign"></i> <strong>Price:</strong> @flight.Price.ToString("C")</p>
+                        <p><i class="fas fa-chair"></i> <strong>Seats Available:</strong> @flight.AvailableSeats</p>
+                    </div>
+
+                    <div style="padding:15px; display:flex; justify-content:space-between; border-top:1px solid #eee;">
+                        <a href="/Admin/Flight/FlightEdit/@flight.Flight_Id_PK"
+                           style="
+                                  background:#0d6efd;
+                                  color:white;
+                                  padding:8px 16px;
+                                  border-radius:6px;
+                                  text-decoration:none;
+                                  font-weight:500;
+                                  display:inline-flex;
+                                  align-items:center;
+                                  gap:6px;
+                                  transition:0.2s;
+                               "
+                           onmouseover="this.style.background='#0b5ed7'"
+                           onmouseout="this.style.background='#0d6efd'">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+
+                        <a href="/Admin/Flight/Delete/@flight.Flight_Id_PK"
+                                               style="
+                                  background:#dc3545;
+                                  color:white;
+                                  padding:8px 16px;
+                                  border-radius:6px;
+                                  text-decoration:none;
+                                  font-weight:500;
+                                  display:inline-flex;
+                                  align-items:center;
+                                  gap:6px;
+                                  transition:0.2s;
+                               "
+                           onmouseover="this.style.background='#b02a37'"
+                           onmouseout="this.style.background='#dc3545'">
+                            <i class="fas fa-trash"></i> Delete
+                        </a>
+
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div style="text-align:center; padding:50px; color:#000;">
+            <i class="fas fa-plane-slash" style="font-size:4rem; margin-bottom:20px; opacity:0.8;"></i>
+            <h2>No Flight Records Found</h2>
+            <p>Click the "Create New Flight" button above to add your first flight record.</p>
+        </div>
+    }
+
+    <footer style="text-align:center; margin-top:50px; color:#000; opacity:0.8;">
+        Flight Management System &copy; 2023
+    </footer>
+</div>
