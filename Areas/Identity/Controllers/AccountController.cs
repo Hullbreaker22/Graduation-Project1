@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using SkyLine.Models;
+using SkyLine.ViewModels;
 using System.Threading.Tasks;
 
 namespace SkyLine.Areas.Identity.Controllers
@@ -33,18 +35,18 @@ namespace SkyLine.Areas.Identity.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(UserRegister userRegister)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View(userRegister);
             }
 
-          
+
 
             ApplicationUser applicationUser = userRegister.Adapt<ApplicationUser>();
 
             var result = await _userManager.CreateAsync(applicationUser, userRegister.Password);
 
-            if(!result.Succeeded)
+            if (!result.Succeeded)
             {
                 foreach (var item in result.Errors)
                 {
@@ -56,7 +58,7 @@ namespace SkyLine.Areas.Identity.Controllers
 
             await _userManager.AddToRoleAsync(applicationUser, SD.CustomerRole);
 
-          
+
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(applicationUser);
             var link = Url.Action("ConfirmEmail", "Account", new { area = "Identity", token = token, userId = applicationUser.Id }, Request.Scheme);
 
@@ -80,7 +82,7 @@ namespace SkyLine.Areas.Identity.Controllers
                 TempData["error-notification"] = "Link Expired!, Resend Email Confirmation";
             else
                 TempData["success-notification"] = "Confirm Email successfully";
-            
+
             return RedirectToAction("Index", "Home", new { area = "Customer" });
         }
 
@@ -109,13 +111,13 @@ namespace SkyLine.Areas.Identity.Controllers
             //_userManager.CheckPasswordAsync();
             var result = await _signInManager.PasswordSignInAsync(user, userLogin.Password, userLogin.RememberMe, true);
 
-            if(!result.Succeeded)
+            if (!result.Succeeded)
             {
                 TempData["error-notification"] = "Invalid User name Or password";
                 return View(userLogin);
             }
 
-            if(!user.EmailConfirmed)
+            if (!user.EmailConfirmed)
             {
                 TempData["error-notification"] = "Confirm Your Email First!";
                 return View(userLogin);
@@ -233,12 +235,12 @@ namespace SkyLine.Areas.Identity.Controllers
                 return View(resetPassword);
             }
 
-            var userOTP = (await _userOTP.GetAsync(e => e.ApplicationUserId == resetPassword.ApplicationUserId)).OrderBy(e=>e.Id).LastOrDefault();
+            var userOTP = (await _userOTP.GetAsync(e => e.ApplicationUserId == resetPassword.ApplicationUserId)).OrderBy(e => e.Id).LastOrDefault();
 
             if (userOTP is null)
                 return NotFound();
 
-            if(userOTP.OTPNumber != resetPassword.OTPNumber)
+            if (userOTP.OTPNumber != resetPassword.OTPNumber)
             {
                 TempData["error-notification"] = "Invalid OTP";
                 return View(resetPassword);
@@ -297,22 +299,24 @@ namespace SkyLine.Areas.Identity.Controllers
         [HttpGet]
         public async Task<IActionResult> Profile(string userId)
         {
-            
-            var Users =  await _userManager.FindByIdAsync(userId);
+
+            var Users = await _userManager.FindByIdAsync(userId);
+
+
+            var newuser = Users.Adapt<ProfileDM>();
 
             if (Users == null)
                 return BadRequest();
 
 
-            return View(Users);
+            return View(newuser);
         }
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Profile(ApplicationUser Appuser, IFormFile Image)
+        public async Task<IActionResult> Profile(ProfileDM Appuser, IFormFile Image)
         {
             var userInDb = await _userManager.FindByIdAsync(Appuser.Id!);
-
             if (userInDb == null)
                 return BadRequest();
 
@@ -325,12 +329,38 @@ namespace SkyLine.Areas.Identity.Controllers
             userInDb.Street = Appuser.Street;
             userInDb.ZipCode = Appuser.ZipCode;
 
-       
+            if (!string.IsNullOrWhiteSpace(Appuser.Password))
+            {
+                if (Appuser.Password != Appuser.ConfirmPassword)
+                {
+                    ModelState.AddModelError("", "Passwords do not match");
+                    return View(Appuser);
+                }
+
+                var token = await _userManager.GeneratePasswordResetTokenAsync(userInDb);
+                var passwordResult = await _userManager.ResetPasswordAsync(
+                    userInDb,
+                    token,
+                    Appuser.Password
+                );
+
+                if (!passwordResult.Succeeded)
+                {
+                    foreach (var error in passwordResult.Errors)
+                        ModelState.AddModelError("", error.Description);
+
+                    return View(Appuser);
+                }
+            }
 
             if (Image != null && Image.Length > 0)
             {
-                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(Image.FileName);
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserImg", fileName);
+                var fileName = Guid.NewGuid() + Path.GetExtension(Image.FileName);
+                var filePath = Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    "wwwroot/UserImg",
+                    fileName
+                );
 
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
@@ -339,7 +369,12 @@ namespace SkyLine.Areas.Identity.Controllers
 
                 if (!string.IsNullOrEmpty(userInDb.Image))
                 {
-                    var oldFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserImg", userInDb.Image);
+                    var oldFilePath = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "wwwroot/UserImg",
+                        userInDb.Image
+                    );
+
                     if (System.IO.File.Exists(oldFilePath))
                         System.IO.File.Delete(oldFilePath);
                 }
@@ -358,9 +393,8 @@ namespace SkyLine.Areas.Identity.Controllers
             }
 
             TempData["success-notification"] = "Updated Successfully";
-
             return RedirectToAction("Index", "Home", new { area = "Customer" });
-         }
+        }
 
     }
 }

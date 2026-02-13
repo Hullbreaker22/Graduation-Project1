@@ -201,6 +201,7 @@ public class HomeController : Controller
         foreach (var Passang in Request.Passengers)
         {
             Passang.User_Id = userId;
+            Passang.Booking_ID = booking.Booking_Id_PK;
         }
 
         foreach (var item in Request.Passengers)
@@ -208,6 +209,22 @@ public class HomeController : Controller
             await _Passenger.CreateAsync(item);
             await _Passenger.CommitAsync();
         }
+
+       
+
+      
+
+       
+
+        var choiceuser = await _userManager.GetUserAsync(User);
+
+        if (user == null)
+            return Unauthorized();
+
+        var Choice = await _Booking.GetOneAsync(expression: e => e.User_Id_FK == choiceuser!.Id);
+
+        if(Choice == null)
+            return NotFound();
 
         if (!string.IsNullOrEmpty(Request.SelectedSeats))
         {
@@ -222,6 +239,7 @@ public class HomeController : Controller
                 {
                     seat.IsOccupied = true;
                     seat.OccupiedBy = Owner!.Passenger_Id;
+                    seat.BookingId = booking.Booking_Id_PK;
                 }
             }
             await _Seat_Reservation.CommitAsync();

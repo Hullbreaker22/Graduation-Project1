@@ -1,0 +1,367 @@
+﻿@model ApplicationUser
+
+@{
+    ViewData["Title"] = "Loyalty Rewards";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+<div class="loyalty-wrapper">
+    <div class="loyalty-card-pro">
+
+        <div class="card-header-custom">
+            
+            <h2 class="title">Loyalty Points</h2>
+            <p class="subtitle">SkyLine</p>
+        </div>
+
+        <div class="points-section">
+            <div class="outer-ring">
+                <div class="inner-circle">
+                    <span class="count">@Model.LoyaltyPoints</span>
+                    <span class="label">Total Points</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-msg">
+            <i class="bi bi-stars"></i>
+            <span>Use your points wisely; more points = more rewards!</span>
+        </div>
+
+        <div class="action-grid">
+            <a href="#" class="btn-pro btn-redeem" data-bs-toggle="modal" data-bs-target="#redeemModal">
+                <i class="bi bi-arrow-repeat"></i>
+                <span>Redeem</span>
+            </a>
+            <div class="modal fade" id="redeemModal" tabindex="-1" aria-labelledby="redeemModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content loyalty-modal-content">
+
+                        <div class="modal-header border-0 pb-0">
+                            <h5 class="modal-title fw-bold text-dark" id="redeemModalLabel">Redemption Program Details</h5>
+                            <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body py-4">
+                            <div class="current-status-card mb-4">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="text-uppercase small fw-semibold text-muted d-block">Available Balance</span>
+                                        <h3 class="fw-bold mb-0 text-primary">@Model.LoyaltyPoints <span class="fs-6 text-muted">Points</span></h3>
+                                    </div>
+                                    <div class="status-badge">Active Member</div>
+                                </div>
+                            </div>
+
+                            <h6 class="fw-bold mb-3 text-dark">How it works:</h6>
+                            <div class="loyalty-info-list">
+                                <div class="info-item">
+                                    <i class="bi bi-shield-check text-primary"></i>
+                                    <div>
+                                        <strong>Conversion Rate</strong>
+                                        <p class="text-muted mb-0 small">Every 100 points equals $1.00 in store credit.</p>
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <i class="bi bi-unlock text-primary"></i>
+                                    <div>
+                                        <strong>Thresholds</strong>
+                                        <p class="text-muted mb-0 small">Redemption starts from a minimum of 500 points.</p>
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <i class="bi bi-lightning-charge text-primary"></i>
+                                    <div>
+                                        <strong>Premium Benefits</strong>
+                                        <p class="text-muted mb-0 small">Accumulate 5,000 points to unlock "VIP Status" with double rewards.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="alert alert-secondary border-0 mt-4 py-2" role="alert">
+                                <small class="fw-medium text-dark text-center d-block">
+                                    Strategic Tip: High-tier rewards offer 20% more value per point.
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer border-0">
+                            <button type="button" class="btn btn-light fw-semibold px-4 rounded-3" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary fw-semibold px-4 rounded-3">Proceed to Exchange</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+
+            <a asp-area="Customer"
+               asp-controller="Home"
+               asp-action="Results"
+               class="btn-pro btn-use">
+                <i class="bi bi-gift"></i>
+                <span>Use Points</span>
+            </a>
+
+            <a asp-area="Customer"
+               asp-controller="Home"
+               asp-action="Results"
+               class="btn-pro btn-increase">
+                <i class="bi bi-graph-up-arrow"></i>
+                <span>Get More Points</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+
+    
+
+    .loyalty-modal-content {
+        border-radius: 24px;
+        border: none;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    .current-status-card {
+        background: #f8fafc;
+        border: 1px inset #e2e8f0;
+        padding: 20px;
+        border-radius: 16px;
+    }
+
+    .status-badge {
+        background: #dcfce7;
+        color: #166534;
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 5px 12px;
+        border-radius: 20px;
+        text-transform: uppercase;
+    }
+
+    .loyalty-info-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .info-item {
+        display: flex;
+        gap: 15px;
+        align-items: flex-start;
+    }
+
+        .info-item i {
+            font-size: 1.2rem;
+            padding-top: 2px;
+        }
+
+        .info-item strong {
+            display: block;
+            font-size: 0.9rem;
+            color: #1e293b;
+        }
+
+    /* Primary Color Override */
+    .text-primary {
+        color: #6366f1 !important;
+    }
+
+    .btn-primary {
+        background-color: #6366f1;
+        border-color: #6366f1;
+    }
+
+        .btn-primary:hover {
+            background-color: #4f46e5;
+            border-color: #4f46e5;
+        }
+
+    :root {
+        --primary-grad: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+        --glass-bg: rgba(255, 255, 255, 0.95);
+    }
+
+    .loyalty-wrapper {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: radial-gradient(circle at top right, #e0e7ff, #f8fafc);
+        padding: 20px;
+    }
+
+    .loyalty-card-pro {
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 30px;
+        padding: 40px;
+        width: 100%;
+        max-width: 450px;
+        text-align: center;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+        .loyalty-card-pro:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px -12px rgba(99, 102, 241, 0.15);
+        }
+
+    .icon-box {
+        background: var(--primary-grad);
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+        color: white;
+        font-size: 1.5rem;
+        box-shadow: 0 10px 15px -3px rgba(168, 85, 247, 0.4);
+    }
+
+    .title {
+        font-weight: 800;
+        color: #1e293b;
+        margin-bottom: 0;
+    }
+
+    .subtitle {
+        color: #64748b;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    /* Points Circle Animation */
+    .points-section {
+        margin: 35px 0;
+    }
+
+    .outer-ring {
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        margin: 0 auto;
+        padding: 10px;
+        background: conic-gradient(#6366f1, #a855f7, #e2e8f0);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: rotateRing 10s linear infinite;
+    }
+
+    .inner-circle {
+        width: 100%;
+        height: 100%;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        animation: none; /* لمنع الدوران مع الحلقة الخارجية */
+    }
+
+    .outer-ring > * {
+        animation: reverseRotate 10s linear infinite;
+    }
+
+    .count {
+        font-size: 3rem;
+        font-weight: 900;
+        color: #1e293b;
+        line-height: 1;
+    }
+
+    .label {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .status-msg {
+        background: #f1f5f9;
+        padding: 12px;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        color: #475569;
+        margin-bottom: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    /* Buttons Design */
+    .action-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .btn-pro {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 14px;
+        border-radius: 15px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-redeem {
+        background: #1e293b;
+        color: white;
+    }
+
+    .btn-use {
+        background: var(--primary-grad);
+        color: white;
+    }
+
+    .btn-increase {
+        border: 2px solid #e2e8f0;
+        color: #475569;
+    }
+
+    .btn-pro:hover {
+        transform: scale(1.02);
+        filter: brightness(1.1);
+        color: white;
+    }
+
+    .btn-increase:hover {
+        background: #f8fafc;
+        color: #1e293b;
+        border-color: #cbd5e1;
+    }
+
+    @@keyframes rotateRing {
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    @@keyframes reverseRotate {
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(-360deg);
+        }
+    }
+
+</style>

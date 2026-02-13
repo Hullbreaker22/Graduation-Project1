@@ -6,30 +6,64 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
+
+
+    .empty-state-center {
+        min-height: 60vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        text-align: center;
+        padding: 40px;
+    }
+
+        .empty-state-center h2 {
+            font-size: 28px;
+            color: #7f8c8d;
+            margin-top: 15px;
+        }
+
+        .empty-state-center p {
+            color: #95a5a6;
+            margin-top: 8px;
+            font-size: 16px;
+        }
+
+    .empty-icon {
+        font-size: 80px;
+        color: #bdc3c7;
+    }
+
     * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
         font-family: 'Poppins', sans-serif;
     }
-        
-    body {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        min-height: 100vh;
-        padding: 20px;
+     body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh; 
+        display: flex;
+        flex-direction: column;
     }
 
     .bookings-container {
         max-width: 1200px;
         margin: 0 auto;
+        padding: 10px 20px; /* قلل padding بدل 20px */
     }
 
     .page-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 30px;
-        padding-bottom: 15px;
+        margin-bottom: 20px; /* قلل الـ margin-bottom بدل 30px */
+        padding-bottom: 10px; /* قلل padding-bottom بدل 15px */
         border-bottom: 2px solid rgba(0, 0, 0, 0.1);
     }
 
@@ -466,144 +500,60 @@
           
         </div>
 
-        <div class="bookings-content">
-            <div class="bookings-list">
-          
+    <div class="bookings-content">
+        <div class="bookings-list">
 
-                <!-- Booking Card 2 -->
-           @foreach(var item in Model)
+            @if (Model == null || !Model.Any())
             {
-                <div class="booking-card">
-                    <div class="booking-header">
-                        <div class="booking-pnr">PNR: @item.PNR</div>
-                        <div class="booking-status status-pending">@item.status</div>
-                    </div>
-                    <div class="booking-details">
-                        <div class="detail-group">
-                            <span class="detail-label">Booking ID</span>
-                            <span class="detail-value">#@item.Booking_Id_PK</span>
-                        </div>
-                        <div class="detail-group">
-                            <span class="detail-label">Booking Date</span>
-                            <span class="detail-value">@item.CreatedAt</span>
-                        </div>
-                        <div class="detail-group">
-                            <span class="detail-label">Flight</span>
-                            @foreach (var max in ViewBag.Fligh as List<Flight>)
-                            {
-                                if(item.Flight_Id == max.Flight_Id_PK)
-                                {
-                                    <span class="detail-value">@max.LeavingAirport!.Name (@max.LeavingAirport!.Code) → @max.ArriveAirport!.Name (@max.ArriveAirport!.Code)</span>
-                                }
-                            }
-                        </div>
-
-                        <div class="detail-group">
-                            <span class="detail-label">Total Price</span>
-                            <span class="detail-value price-value">
-                                @item.TotalPrice.ToString("C")
-                            </span>
-
-                            <span class="loyalty-points">
-                                <i class="fas fa-star"></i>
-                                Earn <strong>@( (int)(item.TotalPrice / 10) )</strong> Loyalty Points
-                            </span>
-                        </div>
-
-
-                        <div class="detail-group">
-                            <span class="detail-label">Fare Details</span>
-                            @foreach (var mid in ViewBag.Allfares as List<Fare>)
-                            {
-                                if (item.Fare_ID == mid.Id)
-                                {
-                                    <div class="fare-rules">
-
-                                        <!-- Refund -->
-                                        <div class="fare-rule @(mid.Refundable ? "available" : "not-available")">
-                                            <i class="fas @(mid.Refundable ? "fa-check-circle" : "fa-times-circle")"></i>
-
-                                            <span>
-                                                Refund:
-                                                <strong>
-                                                    @(mid.Refundable ? "Available" : "Not Available")
-                                                </strong>
-
-                                                @if (mid.Refundable)
-                                                {
-                                                    <span class="fee clickable"
-                                                          title="Refund fee will be applied if you cancel">
-                                                        (Fee: @mid.RefundFee.ToString("C"))
-                                                    </span>
-                                                }
-                                            </span>
-                                        </div>
-
-                                        <!-- Change -->
-                                        <div class="fare-rule @(mid.Changeable ? "available" : "not-available")">
-                                            <i class="fas @(mid.Changeable ? "fa-check-circle" : "fa-times-circle")"></i>
-
-                                            <span>
-                                                Change:
-                                                <strong>
-                                                    @(mid.Changeable ? "Available" : "Not Available")
-                                                </strong>
-
-                                                @if (mid.Changeable)
-                                                {
-                                                    <span class="fee clickable"
-                                                          title="Change fee applies when modifying your booking">
-                                                        (Fee: @mid.ChangeFee.ToString("C"))
-                                                    </span>
-                                                }
-                                            </span>
-                                        </div>
-
-                                    </div>
-                                }
-                            }
-
-                        </div>
-                    </div>
-                    <div class="booking-actions">
-                       
-                        @if(item.status == 0)
-                        {
-                        <a asp-area="Customer"
-                               asp-controller="Booking"
-                               asp-action="Delete"
-                               asp-route-Booking_id="@item.Booking_Id_PK"
-                               class="btn btn-danger">
-                                Cancel
-                        </a>               
-                        }
-
-
+                
+                <div class="empty-state-center">
+                    <i class="fas fa-ticket-alt empty-icon"></i>
+                    <h2>No tickets yet!</h2>
+                    <p>You haven’t booked any flights so far.</p>
+                    <a asp-area="Customer" asp-controller="Home" asp-action="Results" class="btn-book">
+                        Book your first flight
+                    </a>
                 </div>
-
-
-                </div>
-               
-               
             }
-            <div class="booking-actions">
-                <a asp-area="Customer"
-                   asp-controller="Booking"
-                   asp-action="Pay"
-                   class="btn btn-buy">
-                    <i class="fas fa-credit-card"></i> Buy Tickets
-                </a>
+            else
+            {
+                @foreach (var item in Model)
+                {
+                    <div class="booking-card">
+                        <div class="booking-header">
+                            <div class="booking-pnr">PNR: @item.PNR</div>
+                            <div class="booking-status status-pending">@item.status</div>
+                        </div>
+                        <div class="booking-details">
+                          
+                        </div>
+                        <div class="booking-actions">
+                            @if (item.status == 0) 
+                            {
+                                <a asp-area="Customer"
+                                   asp-controller="Booking"
+                                   asp-action="Pay"
+                                   asp-route-bookingId="@item.Booking_Id_PK"
+                                   class="btn btn-buy">
+                                    <i class="fas fa-credit-card"></i> Buy Ticket
+                                </a>
 
-                <a asp-area="Customer"
-                   asp-controller="Home"
-                   asp-action="Index"
-                   class="btn btn-back">
-                    <i class="fas fa-arrow-left"></i> Back
-                </a>
-            </div>
+                                <a asp-area="Customer"
+                                   asp-controller="Booking"
+                                   asp-action="Delete"
+                                   asp-route-Booking_id="@item.Booking_Id_PK"
+                                   class="btn btn-cancel">
+                                    Cancel
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+            }
 
-             
-            </div>
+        </div>
+    </div>
+</div>
 
                
             </div>

@@ -1,4 +1,4 @@
-﻿@model ApplicationUser
+﻿@model ProfileDM
 
 <!DOCTYPE html>
 <html lang="en">
@@ -196,7 +196,6 @@
 </head>
 <body>
 
-    <!-- ✅ تمت إضافة الفورم هنا -->
     <form asp-action="Profile" asp-controller="Account" asp-area="Identity" method="post" enctype="multipart/form-data">
 
         <div class="user-profile-component">
@@ -206,7 +205,6 @@
                     <img id="profileImagePreview" src="~/UserImg/@Model.Image" alt="Profile Photo" class="profile-photo">
                 </div>
 
-                <!-- input ملف مخفي -->
                 <input type="file" id="imageInput" name="Image" accept="image/*" style="display:none;" />
 
                 <div class="profile-info">
@@ -278,6 +276,45 @@
                         <label for="zip">Zip Code</label>
                         <input type="text" id="zip" class="input-field" value="@Model.ZipCode" name="ZipCode">
                     </div>
+
+
+                    <div class="profile-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-lock"></i> Change Password
+                        </h2>
+
+                        <div class="input-group">
+                            <label for="password">New Password</label>
+                            <input type="password"
+                                   id="password"
+                                   class="input-field"
+                                   name="Password"
+                                   placeholder="Enter new password" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="confirmPassword">Confirm Password</label>
+                            <input type="password"
+                                   id="confirmPassword"
+                                   class="input-field"
+                                   name="ConfirmPassword"
+                                   placeholder="Confirm new password" />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                        </div>
+
+                        <!-- زرار خاص بتأكيد الباسورد -->
+                        <button type="submit"
+                                name="action"
+                                value="ChangePassword"
+                                class="btn btn-confirm"
+                                style="align-self:flex-start;">
+                            <i class="fas fa-key"></i> Confirm Password
+                        </button>
+                    </div>
+
+
+
                 </div>
             </div>
 

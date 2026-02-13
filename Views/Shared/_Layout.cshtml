@@ -7,16 +7,16 @@
     string displayName = "My Profile";
     bool showDashboard = false;
     bool showCustomerLinks = false;
+    string userpic = "default.png";
 
+    ApplicationUser? user = null;
 
     if (isAuthenticated)
     {
-        var user = await UserManager.GetUserAsync(User);
-
-        var userpic = user.Image;
+        user = await UserManager.GetUserAsync(User);
+        userpic = !string.IsNullOrEmpty(user?.Image) ? user.Image : "default.png";
         displayName = !string.IsNullOrEmpty(user?.Name) ? user.Name : user.UserName;
 
-        // Use User.IsInRole for reliable layout check
         showDashboard = User.IsInRole(SD.AdminRole) || User.IsInRole(SD.SuperAdminRole);
         showCustomerLinks = !showDashboard && User.IsInRole(SD.CustomerRole);
     }
@@ -32,7 +32,6 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="SkyLine Travel & Tourism Website" name="description">
 
-    @* <link href="~/img/favicon.ico" rel="icon"> *@
     <link href="~/img/apple-favicon.png" rel="apple-touch-icon">
     <link rel="icon" type="image/png" href="~/img/sl.png">
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Raleway:wght@700;800&display=swap" rel="stylesheet">
@@ -41,7 +40,7 @@
     <link href="~/vendor/slick/slick.css" rel="stylesheet">
     <link href="~/vendor/slick/slick-theme.css" rel="stylesheet">
     <link href="~/vendor/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel= "stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link href="~/css/style.css" rel="stylesheet">
@@ -74,13 +73,14 @@
                href="#" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false"
                style="background: rgba(255, 255, 255, 0.1); padding: 4px 10px; border-radius: 50px; transition: 0.3s;">
                 <div class="profile-glow" style="position: relative;">
-                    <img src="~/UserImg/f1a7ab00-e600-41f1-99f6-d16a61f03942.jpg"
+                    <img src="@Url.Content($"~/UserImg/{userpic}")"
                          alt="Profile" width="32" height="32"
                          class="rounded-circle border border-light shadow-sm">
                 </div>
-                <span class="ms-2 fw-semibold text-white small">@displayName</span>
+                <span class="ms-2 fw-semibold text-white small"> @displayName</span>
                 <i class="bi bi-chevron-down ms-1 text-white small"></i>
             </a>
+
             <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" aria-labelledby="profileDropdown"
                 style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); border-radius: 10px; min-width: 140px;">
 
@@ -102,7 +102,7 @@
                     else if (showCustomerLinks)
                     {
                         <li>
-                            <a class="dropdown-item py-2 px-3" href="/Profile/MyPoints">
+                            <a class="dropdown-item py-2 px-3" href="/Customer/Booking/MyPoints">
                                 <i class="fa fa-star me-2 text-warning"></i> My Points
                             </a>
                         </li>
@@ -152,10 +152,10 @@
                         Home
                     </a>
                 </li>
-                <li><a href="/Customer/Home/Details">About Us</a></li>  
+                <li><a href="/Customer/Home/Details">About Us</a></li>
                 @* <li><a href="/Customer/Home/NotFoundPage">Error  Page </a></li> *@
                 @* <li><a href="/Customer/Home/Results">Flights</a></li> *@
-               @* <li><a href="/Customer/Home/Booking">Booking</a></li> *@
+                @* <li><a href="/Customer/Home/Booking">Booking</a></li> *@
             </ul>
         </nav>
 
@@ -175,23 +175,23 @@
             <li class="list-inline-item"><a href="#" class="text-white">Contact</a></li>
         </ul>
         <p class="mb-0">© 2025 SkyLine. All Rights Reserved.</p>
-        <p class="mb-0">Designed with ❤️ by HTML Codex</p>
+
     </div>
 
     <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
 
-    
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-   
+
     <script src="~/js/main.js"></script>
 
-   
+
     @await RenderSectionAsync("Scripts", required: false)
 
 </body>

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SkyLine.Models;
 using Stripe.Checkout;
+using System.Threading.Tasks;
 
 
 namespace SkyLine.Areas.Customer.Controllers
@@ -16,15 +17,19 @@ namespace SkyLine.Areas.Customer.Controllers
         private readonly IRepository<Booking> _Booking;
         private readonly IRepository<Flight> _flight;
         private readonly IRepository<Fare> _fare;
+        public readonly IRepository<Passenger> _passenger;
+        private readonly IRepository<Seat_Reservation> _seat_reservation;
         private readonly UserManager<ApplicationUser> _userManager;
 
 
-        public BookingController(IRepository<Booking> booking, IRepository<Flight> flight, UserManager<ApplicationUser> userManager, IRepository<Fare> fare)
+        public BookingController(IRepository<Booking> booking, IRepository<Flight> flight, UserManager<ApplicationUser> userManager, IRepository<Fare> fare, IRepository<Passenger> passenger, IRepository<Seat_Reservation> seat_reservation)
         {
             _Booking = booking;
             _flight = flight;
             _userManager = userManager;
             _fare = fare;
+            _passenger = passenger;
+            _seat_reservation = seat_reservation;
         }
 
         [HttpGet]
@@ -53,72 +58,128 @@ namespace SkyLine.Areas.Customer.Controllers
 
 
         public async Task<IActionResult> Delete(int Booking_id)
-         {
-            var Books = await _Booking.GetOneAsync(expression: e => e.Booking_Id_PK == Booking_id);
+        {
+            var booking = await _Booking.GetOneAsync(e => e.Booking_Id_PK == Booking_id);
+            if (booking == null)
+                return NotFound();
 
-            _Booking.Delete(Books!);
+
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var userId = booking.User_Id_FK;
+
+            var seatsList = await _seat_reservation.GetAsync(e => e.BookingId == booking.Booking_Id_PK);
+
+
+            if (seatsList != null && seatsList.Any())
+            {
+                foreach (var seat in seatsList)
+                {
+                    seat.IsOccupied = false;
+                    seat.OccupiedBy = null;
+                    seat.BookingId = null;
+                    seat.Passenger = null;
+                    seat.Price = null;
+                    _seat_reservation.Update(seat);
+                }
+                
+                await _seat_reservation.CommitAsync();
+            }
+
+
+            var Pass = await _passenger.GetAsync(expression: e => e.Booking_ID == Booking_id);
+
+            foreach( var item in Pass)
+            {
+                 _passenger.Delete(item);
+                await _passenger.CommitAsync();
+
+            }    
+
+
+            _Booking.Delete(booking);
             await _Booking.CommitAsync();
 
             TempData["success-notification"] = "Deleted Successfully";
 
             return RedirectToAction(
-                    actionName: "Index",
-                    controllerName: "Home",
-                    new { area = "Customer" });
+                actionName: "Index",
+                controllerName: "Home",
+                new { area = "Customer" });
         }
 
 
 
 
-
-
-        public async Task<IActionResult> Pay()
+        public async Task<IActionResult> Pay(int bookingId)
         {
             var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return Unauthorized();
 
-            if (user is null)
+            
+            var booking = await _Booking.GetOneAsync(
+                e => e.Booking_Id_PK == bookingId &&
+                     e.User_Id_FK == user.Id &&
+                     e.status == 0, 
+                includes: [e => e.Flights!]
+            );
+
+            if (booking == null)
                 return NotFound();
 
-            var Flights22 = await _Booking.GetAsync(e => e.User_Id_FK == user.Id, includes: [e => e.Flights!]);
+            var flight = booking.Flights;
 
             var options = new SessionCreateOptions
             {
                 PaymentMethodTypes = new List<string> { "card" },
-                LineItems = new List<SessionLineItemOptions>(),
                 Mode = "payment",
-                SuccessUrl = $"{Request.Scheme}://{Request.Host}/Customer/Booking/Success?session_id={{CHECKOUT_SESSION_ID}}",
-                CancelUrl = $"{Request.Scheme}://{Request.Host}/Customer/Booking/cancel",
+                SuccessUrl =
+                    $"{Request.Scheme}://{Request.Host}/Customer/Booking/Success" +
+                    $"?bookingId={booking.Booking_Id_PK}&session_id={{CHECKOUT_SESSION_ID}}",
+                CancelUrl =
+                    $"{Request.Scheme}://{Request.Host}/Customer/Booking/Cancel" +
+                    $"?bookingId={booking.Booking_Id_PK}",
+                LineItems = new List<SessionLineItemOptions>
+        {
+            new SessionLineItemOptions
+            {
+                PriceData = new SessionLineItemPriceDataOptions
+                {
+                    Currency = "egp",
+                    ProductData = new SessionLineItemPriceDataProductDataOptions
+                    {
+                        Name = $"Flight Ticket - {booking.PNR}",
+
+                        Description =
+                            $"Route: {flight?.LeavingAirport?.Code} → {flight?.ArriveAirport?.Code}\n" +
+                            $"Departure: {flight?.Leaving_Time:yyyy-MM-dd HH:mm}\n" +
+                            $"Booking Date: {booking.CreatedAt:yyyy-MM-dd}",
+
+                        Metadata = new Dictionary<string, string>
+                        {
+                            { "BookingId", booking.Booking_Id_PK.ToString() },
+                            { "PNR", booking.PNR ?? "" },
+                            { "UserId", booking.User_Id_FK },
+                            { "FlightId", booking.Flight_Id.ToString() },
+                            { "FareId", booking.Fare_ID.ToString() }
+                        }
+                    },
+                    UnitAmount = (long)(booking.TotalPrice * 100)
+                },
+                Quantity = 1
+            }
+        }
             };
 
-           
-            foreach (var item in Flights22)
-            {
-                if (item.status == 0)
-                {
-
-                    options.LineItems.Add(new SessionLineItemOptions
-                    {
-                        PriceData = new SessionLineItemPriceDataOptions
-                        {
-                            Currency = "egp",
-                            ProductData = new SessionLineItemPriceDataProductDataOptions
-                            {
-                                Name = item.PNR,
-                                Description = "Created At:" + item.CreatedAt.ToString("yyyy-MM-dd HH:mm")
-                            },
-                            UnitAmount = (long)item.TotalPrice * 100,
-                        },
-                        Quantity = 1,
-                    });
-                }
-         
-            }
-
-          
-
             var service = new SessionService();
-            var session = service.Create(options);
-         
+            var session = await service.CreateAsync(options);
+
             return Redirect(session.Url);
         }
 
@@ -147,13 +208,26 @@ namespace SkyLine.Areas.Customer.Controllers
 
                 user!.LoyaltyPoints += points;
                 await _userManager.UpdateAsync(user);
-
             }
 
             await _Booking.CommitAsync();
 
      
             return View();
+        }
+
+
+
+        public async Task<IActionResult> MyPoints()
+        {
+
+            var user = await _userManager.GetUserAsync(User);
+
+            if(user is null)
+                return Unauthorized();
+
+
+            return View(user);
         }
 
 

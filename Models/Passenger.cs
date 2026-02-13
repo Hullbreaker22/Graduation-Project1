@@ -24,6 +24,8 @@ namespace SkyLine.Models
 
         public int Passenger_Id { get; set; }
 
+        public int Booking_ID { get; set; }
+
         [ForeignKey(nameof(User))]
         public string? User_Id { get; set; }
         public string SeatCode { get; set; }
